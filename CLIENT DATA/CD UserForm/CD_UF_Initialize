@@ -1,0 +1,28 @@
+
+Private Sub UserForm_Initialize()
+
+    Dim lrow        As Long
+    lrow = ThisWorkbook.Sheets.count        ' 1st customer starts on row 4, sheet 4
+
+    Dim r           As Long
+
+    With ListBox1
+        For r = 4 To lrow
+            .AddItem Worksheets("Overview").Range("H" & r).Value
+
+        Next r
+    End With
+
+    Dim i           As Long, j As Long
+
+    For i = 0 To ListBox1.ListCount - 1
+        For j = ListBox1.ListCount - 1 To (i + 1) Step -1
+            If ListBox1.List(j) = ListBox1.List(i) Then
+                ListBox1.Selected(j) = FALSE
+                ListBox1.Selected(i) = FALSE
+                ListBox1.RemoveItem j
+            End If
+        Next
+    Next
+
+End Sub

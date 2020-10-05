@@ -1,0 +1,286 @@
+Sub BackdatedReporting()
+
+Dim ws As Worksheet
+Set ws = ActiveSheet
+
+Dim report_date As Date
+report_date = InputBox("Please input reporting date in following format DD/MM/YYY:")
+'Dim next_ann_date As String
+Dim mng_fee As Double
+Dim succ_fee As Double
+Dim withdrawals As Double
+Dim deposits As Double
+Dim lastrow As Integer
+Dim lrrow As Integer 'last reporting row
+Dim r As Long
+Dim alligned As Boolean
+
+Dim mng_fee_SUM As Double
+Dim succ_fee_SUM As Double
+Dim withdrawals_SUM As Double
+Dim deposits_SUM As Double
+
+alligned = False
+
+
+last_reporting_period = False
+
+lastrow = Range("L" & Rows.Count).End(xlUp).Row
+
+For r = 19 To lastrow
+'if
+
+If Cells(r, 27).Value <= report_date Then
+
+Else
+
+lrrow = r
+
+Exit For
+
+End If
+
+
+
+'end if
+Next r
+
+
+If report_date = Cells(lrrow - 1, 27).Value Then 'to check whether reporting date is alligned with a date where a transaction was made (makes it much easier)
+
+alligned = True
+lrrow = lrrow - 1
+
+Else
+End If
+
+'MsgBox (lrrow & " " & alligned)
+
+
+
+
+If alligned = False Then
+
+For r = 19 To lrrow - 1
+
+mng_fee_SUM = mng_fee_SUM + Cells(r, 20).Value 'count mng_fee sum (T column)
+succ_fee_SUM = succ_fee_SUM + Cells(r, 35).Value 'count succ_fee sum (AI column)
+withdrawals_SUM = withdrawals_SUM + Cells(r, 37).Value
+deposits_SUM = deposits_SUM + Cells(r, 38).Value
+
+Next r
+
+mng_fee_SUM = mng_fee_SUM + Cells(lrrow, 20).Value 'add mngmnt fee for the last period
+
+succ_fee = 0
+mng_fee = Cells(lrrow, 20).Value
+withdrawals = 0
+deposits = 0
+
+
+
+
+
+
+End If
+
+If alligned = True Then
+
+'For r = 19 To lrrow
+
+'mng_fee = mng_fee + Cells(r, 20).Value 'count mng_fee sum (T column)
+'succ_fee = succ_fee + Cells(r, 35).Value 'count succ_fee sum (AI column)
+'withdrawals = withdrawals + Cells(r, 37).Value
+'deposits = deposits + Cells(r, 38).Value
+
+'Next r
+succ_fee = Cells(lrrow, 35).Value
+mng_fee = Cells(lrrow, 20).Value
+withdrawals = Cells(lrrow, 37).Value
+deposits = Cells(lrrow, 38).Value
+
+For r = 19 To lrrow
+
+mng_fee_SUM = mng_fee_SUM + Cells(r, 20).Value 'count mng_fee sum (T column)
+succ_fee_SUM = succ_fee_SUM + Cells(r, 35).Value 'count succ_fee sum (AI column)
+withdrawals_SUM = withdrawals_SUM + Cells(r, 37).Value
+deposits_SUM = deposits_SUM + Cells(r, 38).Value
+
+Next r
+
+
+End If
+
+ws.Range("T10").Value = mng_fee_SUM
+ws.Range("AI10").Value = succ_fee_SUM
+ws.Range("AK10").Value = withdrawals_SUM
+ws.Range("AL10").Value = deposits_SUM
+
+
+
+
+Sheets("NewSection").Range("G8:AL8").Copy
+
+
+
+'$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$'
+
+Sub BReportingUF(ByVal report_date As Date)
+
+Dim ws As Worksheet
+Set ws = ActiveSheet
+
+
+
+Dim mng_fee As Double
+Dim succ_fee As Double
+Dim withdrawals As Double
+Dim deposits As Double
+Dim lastrow As Integer
+Dim lrrow As Integer 'last reporting row
+Dim r As Long
+Dim alligned As Boolean
+
+Dim mng_fee_SUM As Double
+Dim succ_fee_SUM As Double
+Dim withdrawals_SUM As Double
+Dim deposits_SUM As Double
+
+alligned = False
+
+
+last_reporting_period = False
+
+lastrow = Range("L" & Rows.Count).End(xlUp).Row
+
+For r = 19 To lastrow
+'if
+
+If Cells(r, 27).Value <= report_date Then
+
+Else
+
+lrrow = r
+
+Exit For
+
+End If
+
+
+
+'end if
+Next r
+
+
+If report_date = Cells(lrrow - 1, 27).Value Then 'to check whether reporting date is alligned with a date where a transaction was made (makes it much easier)
+
+alligned = True
+lrrow = lrrow - 1
+
+Else
+End If
+
+'MsgBox (lrrow & " " & alligned)
+
+
+
+
+If alligned = False Then
+
+For r = 19 To lrrow - 1
+
+mng_fee_SUM = mng_fee_SUM + Cells(r, 20).Value 'count mng_fee sum (T column)
+succ_fee_SUM = succ_fee_SUM + Cells(r, 35).Value 'count succ_fee sum (AI column)
+withdrawals_SUM = withdrawals_SUM + Cells(r, 37).Value
+deposits_SUM = deposits_SUM + Cells(r, 38).Value
+
+Next r
+
+mng_fee_SUM = mng_fee_SUM + Cells(lrrow, 20).Value 'add mngmnt fee for the last period
+
+succ_fee = 0
+mng_fee = Cells(lrrow, 20).Value
+withdrawals = 0
+deposits = 0
+
+
+
+
+
+
+End If
+
+If alligned = True Then
+
+'For r = 19 To lrrow
+
+'mng_fee = mng_fee + Cells(r, 20).Value 'count mng_fee sum (T column)
+'succ_fee = succ_fee + Cells(r, 35).Value 'count succ_fee sum (AI column)
+'withdrawals = withdrawals + Cells(r, 37).Value
+'deposits = deposits + Cells(r, 38).Value
+
+'Next r
+succ_fee = Cells(lrrow, 35).Value
+mng_fee = Cells(lrrow, 20).Value
+withdrawals = Cells(lrrow, 37).Value
+deposits = Cells(lrrow, 38).Value
+
+For r = 19 To lrrow
+
+mng_fee_SUM = mng_fee_SUM + Cells(r, 20).Value 'count mng_fee sum (T column)
+succ_fee_SUM = succ_fee_SUM + Cells(r, 35).Value 'count succ_fee sum (AI column)
+withdrawals_SUM = withdrawals_SUM + Cells(r, 37).Value
+deposits_SUM = deposits_SUM + Cells(r, 38).Value
+
+Next r
+
+
+End If
+
+ws.Range("T10").Value = mng_fee_SUM
+ws.Range("AI10").Value = succ_fee_SUM
+ws.Range("AK10").Value = withdrawals_SUM
+ws.Range("AL10").Value = deposits_SUM
+
+
+
+
+Sheets("NewSection").Range("G8:AL8").Copy
+
+
+
+
+ws.Range("G12").Select
+ws.Paste
+
+Cells(12, 11).Value = Cells(lrrow, 11).Value 'column K, Funds invested
+Cells(12, 9).Value = Cells(lrrow, 9).Value 'Column I, Funds invested on
+
+ws.Range("AA12").Value = report_date
+ws.Range("T12").Value = mng_fee
+ws.Range("AI12").Value = succ_fee
+ws.Range("AK12").Value = withdrawals
+ws.Range("AL12").Value = deposits
+
+'''''
+'Range("G8:AL8").Copy
+'Range("G8").PasteSpecial Paste:=xlPasteValues
+
+End Sub
+
+
+ws.Range("G12").Select
+ws.Paste
+
+Cells(12, 11).Value = Cells(lrrow, 11).Value 'column K, Funds invested
+Cells(12, 9).Value = Cells(lrrow, 9).Value 'Column I, Funds invested on
+
+ws.Range("AA12").Value = report_date
+ws.Range("T12").Value = mng_fee
+ws.Range("AI12").Value = succ_fee
+ws.Range("AK12").Value = withdrawals
+ws.Range("AL12").Value = deposits
+
+'''''
+'Range("G8:AL8").Copy
+'Range("G8").PasteSpecial Paste:=xlPasteValues

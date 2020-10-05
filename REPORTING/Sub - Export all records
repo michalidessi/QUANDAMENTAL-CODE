@@ -1,0 +1,118 @@
+Sub ExportClientREPORTs()
+
+
+Dim sFolderName As String, sFolder As String
+    Dim sFolderPath As String
+
+    'Main Folder
+    sFolder = "C:\QUANDAMENTAL\"
+
+    'Folder Name
+    sFolderName = Format(Now, "dd MMM yyyy")
+
+    'Folder Path
+    sFolderPath = "C:\QUANDAMENTAL\" & sFolderName
+
+    'Create FSO Object
+    Set oFSO = CreateObject("Scripting.FileSystemObject")
+
+    'Check Specified Folder exists or not
+    If oFSO.FolderExists(sFolderPath) Then
+        'If folder is available with today's date
+      '  MsgBox "Folder already exists  with today's date!", vbInformation, "VBAF1"
+
+    Else
+        'Create Folder
+        MkDir sFolderPath
+
+        'Display message on the screen
+       ' MsgBox "Folder has created with today's date: " & vbCrLf & vbCrLf & sFolderPath, vbInformation, "VBAF1"
+    End If
+
+
+Dim r As Long
+Dim now_timestamp As String
+Dim reporting As Long
+Dim cmr As String
+
+Dim lrow As Long
+
+lrow = ThisWorkbook.Sheets.Count - 6 ' 1st customer starts on row 8, sheet 14
+
+Dim ws As Worksheet
+Set ws = ThisWorkbook.Sheets("Overview")
+
+
+
+now_timestamp = Format(Now, "dd MMM yyyy")
+
+
+For r = 8 To lrow
+
+reporting = 0
+
+ThisWorkbook.Sheets("Overview").Cells(r, 1).Copy
+ThisWorkbook.Sheets("Overview").Cells(5, 1).PasteSpecial Paste:=xlPasteValues
+
+Call GetContracts
+
+cmr = ThisWorkbook.Sheets("Overview").Cells(5, 1).Value
+
+If Not IsEmpty(Range("B5")) And Not IsEmpty(Range("C5")) Then
+
+reporting = 3
+
+ElseIf Not IsEmpty(Range("B5")) Then
+reporting = 1
+
+ElseIf Not IsEmpty(Range("C5")) Then
+reporting = 2
+
+Else: MsgBox ("couldn't identify contracts for client of row " & r)
+
+End If
+
+If reporting = 1 Then
+
+ThisWorkbook.Sheets("1 SMC - current").Select
+
+ActiveSheet.ExportAsFixedFormat _
+        Type:=xlTypePDF, _
+        Filename:="C:\QUANDAMENTAL\" & sFolderName & "\" & cmr & " - " & now_timestamp & ".pdf", _
+        Quality:=xlQualityStandard, _
+        IncludeDocProperties:=True, _
+        IgnorePrintAreas:=False, _
+        OpenAfterPublish:=False
+
+ElseIf reporting = 2 Then
+
+ThisWorkbook.Sheets("2 GS - current").Select
+
+ActiveSheet.ExportAsFixedFormat _
+        Type:=xlTypePDF, _
+        Filename:="C:\QUANDAMENTAL\" & sFolderName & "\" & cmr & " - " & now_timestamp & ".pdf", _
+        Quality:=xlQualityStandard, _
+        IncludeDocProperties:=True, _
+        IgnorePrintAreas:=False, _
+        OpenAfterPublish:=False
+
+ElseIf reporting = 3 Then
+
+ThisWorkbook.Sheets("1&2 - current").Select
+
+ActiveSheet.ExportAsFixedFormat _
+        Type:=xlTypePDF, _
+        Filename:="C:\QUANDAMENTAL\" & sFolderName & "\" & cmr & " - " & now_timestamp & ".pdf", _
+        Quality:=xlQualityStandard, _
+        IncludeDocProperties:=True, _
+        IgnorePrintAreas:=False, _
+        OpenAfterPublish:=False
+
+End If
+
+
+Next r
+
+MsgBox ("All client reports exported.")
+
+End Sub

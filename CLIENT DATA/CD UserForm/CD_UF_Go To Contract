@@ -1,0 +1,36 @@
+Private Sub GoToContract_Click()
+
+    Dim client_contract As Variant
+    Dim i           As Long
+    Dim Item        As String
+    Dim sheet_number As Long
+
+    Dim r           As Long
+    Dim cell        As Range
+
+    'Select Client & Contract (H-column) from User Form list
+    For i = 0 To ListBox1.ListCount - 1
+
+        If ListBox1.Selected(i) = TRUE Then
+
+            client_contract = ListBox1.List(i)
+
+        End If
+    Next i
+
+    'Find Sheet number for Client's contract
+        Sheets("Overview").Activate
+
+    For r = 4 To 100
+
+        If CStr(Cells(r, 8).Value) = CStr(client_contract) Then
+            sheet_number = Cells(r, 13).Value
+            Exit For
+        Else
+
+        End If
+    Next r
+
+    Sheets(sheet_number).Select
+
+    Unload UserForm1

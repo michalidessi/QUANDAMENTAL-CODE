@@ -1,0 +1,81 @@
+Sub new_client()
+
+    Dim customer    As Variant
+    Dim inv_date    As Date
+    Dim inv_amount  As Variant
+    Dim fund        As Variant
+    Dim period      As Variant
+    Dim r           As Long
+    Dim lrow        As Long
+    Dim contract    As String
+    Dim timestamp   As String
+    Dim contract_type As Variant        'Standard or Saving
+
+    'INPUTING CUSTOMER VALUES
+    customer = InputBox("Customer name: ")
+    inv_date = InputBox("Investment Date (DD/MM/YYY): ")
+    inv_amount = InputBox("Invested amount: ")
+    fund = InputBox("Fund - (1) Small-Mid Cap Or (2) Global Sustainable: ")
+    contract_type = InputBox("Contract Type - (1) Standard Or (2) Saving:")
+    period = InputBox("Contract period (in years): ")
+
+    'ERROR HANDLING ON FUND SELECTION
+    If fund <> 1 And fund <> 2 Then
+        MsgBox ("Fund Type Not properly defined. Needs To be (1) Small-Mid Cap Or (2) Global Sustainable.")
+        Exit Sub
+    End If
+
+    If contract_type <> 1 And contract_type <> 2 Then
+        MsgBox ("Contract Type Not properly defined. Needs To be (1) Standard Or (2) Saving.")
+        Exit Sub
+    End If
+
+    'CREATING COPY OF NEW CLIENT TEMPLATE SHEET
+    timestamp = Format(inv_date, "YYMMDD")
+    contract = timestamp & period & fund
+
+    Sheets("New Client Template").Copy , Sheets(Sheets.count)
+    Sheets(Sheets.count).Visible = TRUE
+    Sheets(Sheets.count).Select
+    Sheets(Sheets.count).Name = customer & " " & contract
+
+    'FILLING IN CUSTOMER INFO
+    Range("E3").Value = customer
+    Range("F3").Value = contract
+    Range("G3").Value = inv_date
+    Range("H3").Value = inv_amount
+    Range("K3").Value = period
+    Range("J3").Value = 0.02
+
+    'SELECTING FUND BASED ON USER INPUT
+    If fund = "1" Then
+        Range("I3").Value = Sheets(1).Range("H2")
+    ElseIf fund = "2" Then
+        Range("I3").Value = Sheets(1).Range("H3")
+    Else
+        MsgBox ("Contract Type Not properly defined. Needs To be (1) Standard Or (2) Saving.")
+        Exit Sub
+    End If
+
+    'SELECTING CONTRACT TYPE BASED ON USER INPUT
+    If contract_type = "1" Then
+        Range("L3").Value = Sheets(1).Range("H6")
+    ElseIf contract_type = "2" Then
+        Range("L3").Value = Sheets(1).Range("H7")
+    Else
+        MsgBox ("Fund Type Not properly defined. Needs To be 1 (Small-Mid Cap) Or 2 (Global Sustainable).")
+        Exit Sub
+    End If
+
+    'FILLING IN INVESTED AMOUNT TO PARTICULAR ROW
+    lrow = Range("A" & Rows.count).End(xlUp).Row
+
+    For r = 4 To lrow
+        If Cells(r, 1) = inv_date Then
+            Cells(r, 4) = inv_amount
+            Exit For
+        Else
+        End If
+    Next r
+
+End Sub

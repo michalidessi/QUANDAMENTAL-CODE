@@ -1,0 +1,6 @@
+
+Option Explicit
+
+Function sheetName(number As Long) As String
+    sheetName = ActiveWorkbook.Sheets(number).Name
+End Function

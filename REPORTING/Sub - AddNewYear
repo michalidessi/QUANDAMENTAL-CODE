@@ -1,0 +1,24 @@
+Option Explicit
+
+Sub AddNewYear()
+
+  Dim rp_wb As Workbook
+  Set rp_wb = ThisWorkbook
+  rp_wb.Activate
+
+  Dim rp_ws As Worksheet
+  Set rp_ws = rp_wb.Sheets("Sales Data NEW")
+
+  Dim lastrow As Integer
+  lastrow = rp_ws.Range("L" & Rows.Count).End(xlUp).Row
+
+  Dim next_ann_date As Date
+  next_ann_date = rp_ws.Range("AA" & lastrow).Value
+
+  Sheets("NewSection").Rows("14:14").Copy
+    rp_ws.Range("A" & lastrow + 1).Select
+    rp_ws.Paste
+
+  rp_ws.Range("I" & lastrow + 1).Value = next_ann_date
+
+End Sub

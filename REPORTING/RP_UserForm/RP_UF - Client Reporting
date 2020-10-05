@@ -1,0 +1,121 @@
+
+Private Sub CommandButton1_Click()
+
+Dim rp_wb As Workbook
+Set rp_wb = ThisWorkbook
+
+Dim rp_ws As Worksheet
+Set rp_ws = rp_wb.Sheets("Sales Data NEW")
+
+Dim cd_wb As Workbook
+Set cd_wb = Workbooks.Open(Filename:="C:\QUANDAMENTAL\Client Data-1.xlsb")
+
+Dim cd_ws As Worksheet
+Set cd_ws = cd_wb.Sheets("Overview")
+
+'Select Client & Contract (H-column) from User Form list
+Dim i As Long
+Dim client_contract As Variant
+
+For i = 0 To ListBox1.ListCount - 1
+    If ListBox1.Selected(i) = True Then
+      client_contract = ListBox1.List(i)
+    End If
+Next i
+
+'Find Sheet number for Client's contract
+Sheets("Overview").Activate
+
+Dim sheet_number As Long
+
+For r = 4 To 100
+    If CStr(Cells(r, 8).Value) = CStr(client_contract) Then
+         sheet_number = Cells(r, 13).Value
+Exit For
+    Else
+    End If
+Next r
+
+'Go to Client contract
+Sheets(sheet_number).Select
+Sheets(sheet_number).Activate
+
+Dim lrow as Long
+lrow = Cells(4, 1).End(xlDown).Row
+
+'Set Client data as variables
+
+
+Dim next_transaction_date As Date
+
+Dim inv_date As Date
+inv_date = Range("G3").Value
+Dim inv_amount As Variant
+inv_amount = Range("H3").Value
+Dim fund As Variant
+fund = Range("I3").Value
+Dim period As Variant
+period = Range("K3").Value
+Dim customer As Variant
+customer = Range("E3").Value
+Dim contract As String
+contract = Range("F3").Value
+
+rp_ws.Activate
+
+rp_ws.Rows("19:200").EntireRow.Delete ' clean up Sales Data NEW tab
+
+rp_wb.Sheets("NewSection").Rows("17:17").Copy
+rp_ws.Range("A19").Select
+rp_ws.Paste 'copy-paste first year row
+
+Cells(19, 2).Value = customer
+Cells(19, 3).Value = contract
+Cells(19, 9).Value = inv_date
+Cells(19, 11).Value = inv_amount
+Cells(19, 2).Value = customer
+Range("W19").Value = period
+Cells(19, 12).Value = fund
+
+'ADDING rows to create completed Sales Data card
+Dim current_ann_date As Date
+current_ann_date = inv_date
+
+Dim next_ann_date As Date
+next_ann_date = inv_date + 365
+
+Dim withdrawal As Double
+Dim deposit As Double
+Dim transaction_date As Date
+
+For r = 4 To lrow
+
+    cd_wb.Activate
+    Sheets(sheet_number).Activate
+
+    If Cells(r, 1).Value > next_ann_date Then
+        r = r - 1
+
+        Call AddNewYear
+        
+        next_ann_date = next_ann_date + 365
+    ElseIf Cells(r, 2).Value <> "" Then
+        withdrawal = Cells(r, 2).Value
+        transaction_date = Cells(r, 1).Value
+
+        Call AddWithDrawal(withdrawal, transaction_date)
+
+    ElseIf Cells(r, 4).Value <> "" Then
+        deposit = Cells(r, 4).Value
+        transaction_date = Cells(r, 1).Value
+
+        Call deposit(deposit,transaction_date)
+
+    Else: MsgBox ("Error")
+    End If
+
+Next r
+
+Unload UserForm2
+
+End Sub

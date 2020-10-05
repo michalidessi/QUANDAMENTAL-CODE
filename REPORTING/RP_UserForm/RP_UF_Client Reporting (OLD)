@@ -1,0 +1,286 @@
+Private Sub ClientReporting_Click()
+
+    Dim client      As Variant
+    Dim i           As Long
+    Dim Item        As String
+
+    Dim r           As Long
+    Dim cell        As Range
+
+    Dim now_timestamp As String
+    now_timestamp = Format(Now, "dd MMM yyyy")
+
+    Dim sFolderName As String, sFolder As String
+    Dim sFolderPath As String
+
+    'Main Folder
+    sFolder = "C:\QUANDAMENTAL\"
+
+    'Folder Name
+    sFolderName = Format(Now, "dd MMM yyyy")
+
+    'Folder Path
+    sFolderPath = "C:\QUANDAMENTAL\" & sFolderName
+
+    If ComboBox1.Value = "Current reporting" Then
+
+        For i = 0 To ListBox1.ListCount - 1
+
+            If ListBox1.Selected(i) = TRUE Then
+
+                client = ListBox1.List(i)
+
+            End If
+        Next i
+
+        'MsgBox (Item)
+
+        Sheets("Overview").Activate
+
+        Sheets("Overview").Range("B5").Value = ""
+        Sheets("Overview").Range("C5").Value = ""
+
+        For r = 8 To 100
+
+            If CStr(Cells(r, 1).Value) = CStr(client) Then
+                If Cells(r, 9).Value = "Small-Mid Cap" Then
+                    Range("B5").Value = Cells(r, 2).Value
+                ElseIf Cells(r, 9).Value = "Global Sustainable" Then
+                    Range("C5").Value = Cells(r, 2).Value
+                End If
+
+            Else
+            End If
+        Next r
+
+        Sheets("Overview").Range("A5").Value = client
+
+        Unload UserForm1
+
+        If Not IsEmpty(Sheets("Overview").Range("B5")) And Not IsEmpty(Sheets("Overview").Range("C5")) Then
+            ThisWorkbook.Sheets("1&2 - current").Select
+
+            If CheckBoxPrint.Value = TRUE Then        ' print reporting if checkbox is checked
+
+            Set oFSO = CreateObject("Scripting.FileSystemObject")
+            If oFSO.FolderExists(sFolderPath) Then
+            Else
+                MkDir sFolderPath
+            End If
+            ActiveSheet.ExportAsFixedFormat _
+                                            Type:=xlTypePDF, _
+                                            Filename:="C:\QUANDAMENTAL\" & sFolderName & "\" & client & " - " & now_timestamp & ".pdf", _
+                                            Quality:=xlQualityStandard, _
+                                            IncludeDocProperties:=True, _
+                                            IgnorePrintAreas:=False, _
+                                            OpenAfterPublish:=False
+
+            MsgBox ("Reporting printed For client " & client & "." & vbCrLf & "Saved in: " & "C:\QUANDAMENTAL\" & sFolderName & "\" & client & " - " & now_timestamp & ".pdf")
+
+        End If
+
+    ElseIf Not IsEmpty(Range("B5")) Then
+        ThisWorkbook.Sheets("1 SMC - current").Select
+
+        If CheckBoxPrint.Value = TRUE Then        ' print reporting if checkbox is checked
+
+        Set oFSO = CreateObject("Scripting.FileSystemObject")
+        If oFSO.FolderExists(sFolderPath) Then
+        Else
+            MkDir sFolderPath
+        End If
+
+        ActiveSheet.ExportAsFixedFormat _
+                                        Type:=xlTypePDF, _
+                                        Filename:="C:\QUANDAMENTAL\" & sFolderName & "\" & client & " - " & now_timestamp & ".pdf", _
+                                        Quality:=xlQualityStandard, _
+                                        IncludeDocProperties:=True, _
+                                        IgnorePrintAreas:=False, _
+                                        OpenAfterPublish:=False
+
+        MsgBox ("Reporting printed For client " & client & "." & vbCrLf & "Saved in: " & "C:\QUANDAMENTAL\" & sFolderName & "\" & client & " - " & now_timestamp & ".pdf")
+
+    End If
+
+ElseIf Not IsEmpty(Range("C5")) Then
+    ThisWorkbook.Sheets("2 GS - current").Select
+
+    If CheckBoxPrint.Value = TRUE Then        ' print reporting if checkbox is checked
+
+    Set oFSO = CreateObject("Scripting.FileSystemObject")
+    If oFSO.FolderExists(sFolderPath) Then
+    Else
+        MkDir sFolderPath
+    End If
+
+    ActiveSheet.ExportAsFixedFormat _
+                                    Type:=xlTypePDF, _
+                                    Filename:="C:\QUANDAMENTAL\" & sFolderName & "\" & client & " - " & now_timestamp & ".pdf", _
+                                    Quality:=xlQualityStandard, _
+                                    IncludeDocProperties:=True, _
+                                    IgnorePrintAreas:=False, _
+                                    OpenAfterPublish:=False
+
+    MsgBox ("Reporting printed For client " & client & "." & vbCrLf & "Saved in: " & "C:\QUANDAMENTAL\" & sFolderName & "\" & client & " - " & now_timestamp & ".pdf")
+
+End If
+End If
+
+'BACKDATED REPORTING
+
+ElseIf ComboBox1.Value = "Backdated reporting" Then
+    Dim report_date As Date
+    report_date = InputBox("Please input reporting Date in following format DD/MM/YYY:")
+
+    'Set "client" variable
+
+    For i = 0 To ListBox1.ListCount - 1
+
+        If ListBox1.Selected(i) = TRUE Then
+
+            client = ListBox1.List(i)
+
+        End If
+    Next i
+
+    Dim a           As Long        '1st contract sheet number
+    Dim b           As Long        '2nd contract sheet number
+
+    Dim gs          As Boolean
+    Dim smc         As Boolean
+
+    gs = FALSE
+    smc = FALSE
+
+    a = 0
+    b = 0
+
+    'Display selected client data in Overview page
+
+    Sheets("Overview").Activate
+
+    Sheets("Overview").Range("B5").Value = ""
+    Sheets("Overview").Range("C5").Value = ""
+
+    For r = 8 To 100
+
+        If CStr(Cells(r, 1).Value) = CStr(client) Then
+            If a = 0 Then
+                a = r + 6        'identify sheet number for 1st contract
+            Else
+                b = r + 6        'identify sheet number for 2nd contract
+            End If
+
+            If Cells(r, 9).Value = "Small-Mid Cap" Then
+                Range("B5").Value = Cells(r, 2).Value
+                smc = TRUE
+            ElseIf Cells(r, 9).Value = "Global Sustainable" Then
+                Range("C5").Value = Cells(r, 2).Value
+                gs = TRUE
+            End If
+
+        Else
+        End If
+    Next r
+
+    Sheets("Overview").Range("A5").Value = client
+
+    'Call Backdated reporting on client sheets
+
+    If a <> 0 Then
+
+        Worksheets(a).Activate
+
+        Call BReportingUF(report_date)
+
+    End If
+
+    If b <> 0 Then
+
+        Worksheets(b).Activate
+        Call BReportingUF(report_date)
+
+    End If
+
+    'Navigate to reporting TAB
+
+    If smc = TRUE And gs = TRUE Then
+
+        ThisWorkbook.Sheets("1&2 - backdated").Select
+
+        If CheckBoxPrint.Value = TRUE Then        ' print reporting if checkbox is checked
+
+        Set oFSO = CreateObject("Scripting.FileSystemObject")
+        If oFSO.FolderExists(sFolderPath) Then
+        Else
+            MkDir sFolderPath
+        End If
+
+        ActiveSheet.ExportAsFixedFormat _
+                                        Type:=xlTypePDF, _
+                                        Filename:="C:\QUANDAMENTAL\" & sFolderName & "\" & client & " - " & now_timestamp & ".pdf", _
+                                        Quality:=xlQualityStandard, _
+                                        IncludeDocProperties:=True, _
+                                        IgnorePrintAreas:=False, _
+                                        OpenAfterPublish:=False
+
+        MsgBox ("Reporting printed For client " & client & "." & vbCrLf & "Saved in: " & "C:\QUANDAMENTAL\" & sFolderName & "\" & client & " - " & now_timestamp & ".pdf")
+
+    End If
+
+ElseIf smc = TRUE Then
+
+    ThisWorkbook.Sheets("1 SMC - backdated").Select
+
+    If CheckBoxPrint.Value = TRUE Then        ' print reporting if checkbox is checked
+
+    Set oFSO = CreateObject("Scripting.FileSystemObject")
+    If oFSO.FolderExists(sFolderPath) Then
+    Else
+        MkDir sFolderPath
+    End If
+
+    ActiveSheet.ExportAsFixedFormat _
+                                    Type:=xlTypePDF, _
+                                    Filename:="C:\QUANDAMENTAL\" & sFolderName & "\" & client & " - " & now_timestamp & ".pdf", _
+                                    Quality:=xlQualityStandard, _
+                                    IncludeDocProperties:=True, _
+                                    IgnorePrintAreas:=False, _
+                                    OpenAfterPublish:=False
+
+    MsgBox ("Reporting printed For client " & client & "." & vbCrLf & "Saved in: " & "C:\QUANDAMENTAL\" & sFolderName & "\" & client & " - " & now_timestamp & ".pdf")
+
+End If
+
+ElseIf gs = TRUE Then
+
+    ThisWorkbook.Sheets("2 GS - backdated").Select
+
+    If CheckBoxPrint.Value = TRUE Then        ' print reporting if checkbox is checked
+
+    Set oFSO = CreateObject("Scripting.FileSystemObject")
+    If oFSO.FolderExists(sFolderPath) Then
+    Else
+        MkDir sFolderPath
+    End If
+
+    ActiveSheet.ExportAsFixedFormat _
+                                    Type:=xlTypePDF, _
+                                    Filename:="C:\QUANDAMENTAL\" & sFolderName & "\" & client & " - " & now_timestamp & ".pdf", _
+                                    Quality:=xlQualityStandard, _
+                                    IncludeDocProperties:=True, _
+                                    IgnorePrintAreas:=False, _
+                                    OpenAfterPublish:=False
+
+    MsgBox ("Reporting printed For client " & client & "." & vbCrLf & "Saved in: " & "C:\QUANDAMENTAL\" & sFolderName & "\" & client & " - " & now_timestamp & ".pdf")
+
+End If
+
+End If
+
+End If
+
+Unload UserForm1
+
+'Next cell
+End Sub
